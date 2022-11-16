@@ -106,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 y=String.valueOf(currentLocation.getLongitude());
                 // Craig This is For You
                 // Intent takes you to PlacesActivity
-                Intent placesIntent = new Intent(MapsActivity.this, TempSelectOptionAct.class);
+                Intent placesIntent = new Intent(MapsActivity.this, PlacesActivity.class);
                 // Passing x coordinate to PlacesActivity via Intent
                 placesIntent.putExtra("x", x);
                 // Passing y coordinate to PlacesActivity via Intent
