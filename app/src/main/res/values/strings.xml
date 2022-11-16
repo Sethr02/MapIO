@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GuideIO</string>
+    <string name="title_activity_maps">GuideIO</string>
+    <string name="apiKey">AIzaSyA8FOrxMdV3QY7WPEEFxP1ds29btpKC3u4</string>
+</resources>
