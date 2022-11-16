@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:id="@+id/bookRl"
+            android:id="@+id/placeRl"
             android:layout_width="100dp"
             android:layout_height="140dp"
             android:layout_marginEnd="5dp"
@@ -31,7 +31,7 @@
             style="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/bookRl"
+            android:layout_toEndOf="@id/placeRl"
             android:maxLines="1"
             android:text="Book Title" />
 

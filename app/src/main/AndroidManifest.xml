@@ -22,14 +22,7 @@
         android:theme="@style/Theme.GuideIO"
         tools:targetApi="31">
         <activity
-            android:name=".ViewImagesActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".TempSelectOptionAct"
+            android:name=".PlacesActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

@@ -22,11 +22,11 @@ import com.google.firebase.storage.StorageReference;
 
 public class MyApplication {
 
-    public static void loadImageFromURL(String imageUrl, ImageView bookImage) {
+    public static void loadImageFromURL(String imageUrl, ImageView image) {
         // Log variable
         String TAG = "LOAD_IMAGE_FROM_URL_TAG";
 
-        // Storage reference for book images
+        // Storage reference for place images
         StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
         ref.getBytes(ONE_MEGABYTE)
                 // OnSuccess listener
@@ -36,7 +36,7 @@ public class MyApplication {
                         // Decoding bitmap from url
                         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         // Setting the bitmap to the Image View
-                        bookImage.setImageBitmap(bmp);
+                        image.setImageBitmap(bmp);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -45,17 +45,17 @@ public class MyApplication {
                 });
     }
 
-    public static void deleteBook(Context context, String placeId, String url) {
+    public static void deletePlace(Context context, String placeId, String url) {
         // Log TAG
-        String TAG = "DELETE_BOOK_TAGE";
+        String TAG = "DELETE_place_TAGE";
 
         // Log
-        Log.d(TAG, "deleteBook: Deleting.....");
+        Log.d(TAG, "deletePlace: Deleting.....");
 
         // Log
-        Log.d(TAG, "deleteBook: Deleting from Storage...");
+        Log.d(TAG, "deletePlace: Deleting from Storage...");
 
-        // Storage reference for book image
+        // Storage reference for place image
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
         // Delete image
         storageReference.delete()
@@ -68,10 +68,10 @@ public class MyApplication {
                         // Log
                         Log.d(TAG, "onSuccess: Now deleting info from DB");
 
-                        // Database Reference for books
+                        // Database Reference for places
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ImagesST10119434");
 
-                        // Removing selected book from database
+                        // Removing selected place from database
                         reference.child(placeId)
                                 .removeValue()
                                 // OnSuccess Listener
@@ -81,7 +81,7 @@ public class MyApplication {
                                         // Log
                                         Log.d(TAG, "onSuccess: Deleted from Database.");
                                         // display toast on success
-                                        Toast.makeText(context, "Book Delete Successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Place Deleted Successfully", Toast.LENGTH_SHORT).show();
                                     }
                                 })
                                 // on failure listener

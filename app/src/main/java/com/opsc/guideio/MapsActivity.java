@@ -29,8 +29,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -39,7 +37,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.opsc.guideio.databinding.ActivityMapsBinding;
@@ -50,7 +47,6 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback {
@@ -71,7 +67,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String estimatedTimeToDestination;
     private MarkerOptions markerOptions;
 
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getUid());
+    String uid = FirebaseAuth.getInstance().getUid();
+
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(uid);
 
     String x, y;
 
@@ -86,12 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //initialize client (GeeksforGeeks, 2021)
         client = LocationServices.getFusedLocationProviderClient(this);
 
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MapsActivity.this, Settings.class));
-            }
-        });
+        menu.setOnClickListener(view -> startActivity(new Intent(MapsActivity.this, Settings.class)));
 
         // Permissions (GeeksforGeeks, 2021)
         if (ActivityCompat.checkSelfPermission(MapsActivity.this,
@@ -103,26 +96,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
         }
 
-        binding.gpsRecenter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getCurrentLocation();
-            }
-        });
+        binding.gpsRecenter.setOnClickListener(view -> getCurrentLocation());
 
-        imageButton6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Craig This is For You
-                // Intent takes you to PlacesActivity
-                Intent placesIntent = new Intent(MapsActivity.this, TempSelectOptionAct.class);
-                // Passing x coordinate to PlacesActivity via Intent
-                placesIntent.putExtra("x", x);
-                // Passing y coordinate to PlacesActivity via Intent
-                placesIntent.putExtra("y", y);
-                // Starting Activity with values
-                startActivity(placesIntent);
-            }
+        imageButton6.setOnClickListener(view -> {
+            // Craig This is For You
+            // Intent takes you to PlacesActivity
+            Intent placesIntent = new Intent(MapsActivity.this, PlacesActivity.class);
+            // Passing x coordinate to PlacesActivity via Intent
+            placesIntent.putExtra("x", x);
+            // Passing y coordinate to PlacesActivity via Intent
+            placesIntent.putExtra("y", y);
+            // Starting Activity with values
+            startActivity(placesIntent);
         });
     }
 
@@ -146,13 +131,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    currentLocation = location;
-                    initializeMap();
-                }
+        task.addOnSuccessListener(location -> {
+            if (location != null) {
+                currentLocation = location;
+                initializeMap();
             }
         });
     }
@@ -224,17 +206,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     saved.put("Longitude", String.valueOf(targetLocation.getLatLng().longitude));
                     saved.put("Latitude", String.valueOf(targetLocation.getLatLng().latitude));
                     saved.put("Phone Number", targetLocation.getPhoneNumber());
-                    ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            if (!task.isSuccessful()) {
-                                Log.e("firebase", "Error getting data", task.getException());
-                            } else {
-                                Log.d("firebase", String.valueOf(task.getResult().getValue()));
-                            }
+                    ref.get().addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()) {
+                            Log.e("firebase", "Error getting data", task.getException());
+                        } else {
+                            Log.d("firebase", String.valueOf(task.getResult().getValue()));
                         }
                     });
-
 
                     ref.child("Landmarks").setValue(saved);
 
