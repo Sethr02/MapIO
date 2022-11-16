@@ -95,12 +95,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Permissions (GeeksforGeeks, 2021)
         if (ActivityCompat.checkSelfPermission(MapsActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getCurrentLocation();
         } else {
             // Request permission (GeeksforGeeks, 2021)
             ActivityCompat.requestPermissions(MapsActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
         }
 
         binding.gpsRecenter.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +113,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         imageButton6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                x=String.valueOf(currentLocation.getLatitude());
+                y=String.valueOf(currentLocation.getLongitude());
                 // Craig This is For You
                 // Intent takes you to PlacesActivity
                 Intent placesIntent = new Intent(MapsActivity.this, TempSelectOptionAct.class);
@@ -124,6 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(placesIntent);
             }
         });
+
+
     }
 
     private void initViews() {
@@ -311,6 +316,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            String xCoord = extras.getString("x");
+            String yCoord = extras.getString("y");
+            placeMarker(xCoord, yCoord);
+        }
     }
 
     @SuppressLint("MissingSuperCall")
@@ -328,5 +341,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    public void placeMarker(String xCoord, String yCoord) {
+        try {
+            LatLng coord = new LatLng(Double.parseDouble(xCoord), Double.parseDouble(yCoord));
+            mMap.addMarker(new MarkerOptions().position(coord).title(
+                "POI"
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

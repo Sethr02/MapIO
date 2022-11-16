@@ -3,6 +3,7 @@ package com.opsc.guideio;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,12 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
 
         // Show dialog for more button
         holder.moreBtn.setOnClickListener(view -> moreOptionsDialog(model, holder));
+        holder.placeImage.setOnClickListener(veiw -> {
+            Intent intent = new Intent(context, MapsActivity.class);
+            intent.putExtra("x", placesArrayList.get(position).getX());
+            intent.putExtra("y", placesArrayList.get(position).getY());
+            context.startActivity(intent);
+        });
     }
 
     private void moreOptionsDialog(PlacesModel model, PlacesHolder holder) {
@@ -118,6 +125,24 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
             titleTv = itemView.findViewById(R.id.titleTv);
             coordinatesTv = itemView.findViewById(R.id.coordinatesTv);
             moreBtn = itemView.findViewById(R.id.moreBtn);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("test", "onClick: dostuff");
+//                    if (recyclearViewInterface != null){
+//
+//                        int pos = getAdapterPosition();
+//
+//                        if (pos != RecyclerView.NO_POSITION){
+//                            recyclearViewInterface.onItemClick(pos);
+//
+//                        }
+//
+//                    }
+                }
+            });
         }
+
     }
 }

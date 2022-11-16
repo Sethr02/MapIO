@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ViewImagesActivity extends AppCompatActivity {
+public class ViewImagesActivity extends AppCompatActivity implements RecyclearViewInterface{
 
     RecyclerView placesRv;
 
@@ -71,5 +71,10 @@ public class ViewImagesActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.i("RecyclearView", "onItemClick: We clicked it");
     }
 }
