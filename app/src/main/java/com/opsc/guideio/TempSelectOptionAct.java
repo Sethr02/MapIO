@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.ContentResolver;
@@ -18,6 +20,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -25,9 +30,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -36,6 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TempSelectOptionAct extends AppCompatActivity {
@@ -56,6 +65,8 @@ public class TempSelectOptionAct extends AppCompatActivity {
 
     Button btnTakePic, btnViewPics;
     ImageView iconIv;
+    RecyclerView placesRv;
+
     String x = "", y = "";
 
     // Bitmap Variable
@@ -63,11 +74,24 @@ public class TempSelectOptionAct extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityResultLauncher;
 
+    // Book Model ArrayList
+    private ArrayList<PlacesModel> placesArrayList;
+
+    // Instance of BookAdapter Class
+    private PlacesAdapter placesAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp_select_option);
         initViews();
+
+        // Getting Intent (GeeksforGeeks, 2019)
+        Intent intent = getIntent();
+        // Getting x intent (GeeksforGeeks, 2019)
+        x = intent.getStringExtra("x");
+        // Getting y intent (GeeksforGeeks, 2019)
+        y = intent.getStringExtra("y");
 
         // Init firebaseAuth (Firebase, 2022)
         firebaseAuth = FirebaseAuth.getInstance();
@@ -93,23 +117,45 @@ public class TempSelectOptionAct extends AppCompatActivity {
             // Passing the bitmap to the saveImage method
             imageUri = saveImage(bm, TempSelectOptionAct.this);
             uploadFile(imageUri);
-            // Setting the image in the Image View
-            iconIv.setImageURI(imageUri);
         });
 
-        btnTakePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE);
-            }
-        });
+        loadBookList();
+    }
 
-        btnViewPics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(TempSelectOptionAct.this, ViewImagesActivity.class));
-            }
-        });
+    private void loadBookList() {
+        // init array before adding data
+        placesArrayList = new ArrayList<>();
+
+        // Book Database Reference (Firebase, 2022)
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ImagesST10119434");
+        // addValueEventListener (Firebase, 2022)
+        ref.orderByChild("uid").equalTo(FirebaseAuth.getInstance().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // Clear bookArrayList
+                        placesArrayList.clear();
+                        // DataSnapshot for loop (Firebase, 2022)
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            // Creating a BookModel with object from database
+                            PlacesModel model = ds.getValue(PlacesModel.class);
+                            // Adding model object to bookArrayList
+                            placesArrayList.add(model);
+                            // Log
+                            //Log.d(TAG, "onDataChange: " + model.getId() + " " + model.getTitle());
+                        }
+
+                        // Setting Recycler View Layout Manager
+                        placesRv.setLayoutManager(new LinearLayoutManager(TempSelectOptionAct.this, LinearLayoutManager.VERTICAL, false));
+                        // Setup Adapter
+                        placesAdapter = new PlacesAdapter(TempSelectOptionAct.this, placesArrayList);
+                        // Set adapter to recyclerview
+                        placesRv.setAdapter(placesAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
     }
 
     //region Save Image Method
@@ -154,7 +200,7 @@ public class TempSelectOptionAct extends AppCompatActivity {
                     Log.d(TAG, "onSuccess: Successfully added");
                     // Toast to display when item is successfully added
                     Toast.makeText(TempSelectOptionAct.this, "Item Successfully added!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    //finish();
                 })
                 .addOnFailureListener(e -> {
                     // Log
@@ -247,8 +293,28 @@ public class TempSelectOptionAct extends AppCompatActivity {
     }
 
     private void initViews() {
-        btnTakePic = findViewById(R.id.btnTakePic);
-        btnViewPics = findViewById(R.id.btnViewPics);
-        iconIv = findViewById(R.id.iconIv);
+        placesRv = findViewById(R.id.placesRv);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("Places");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Menu Inflater
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.add_item_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // onOptionsItemSelected for menuCamera
+        if (item.getItemId() == R.id.menuCamera) {
+            //cameraImageIntent() (GeeksforGeeks, 2019)
+            checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

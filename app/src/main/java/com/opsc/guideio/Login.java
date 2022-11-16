@@ -110,7 +110,7 @@ public class Login extends AppCompatActivity {
         firebaseAuth.signInWithEmailAndPassword(emailVal, passwordVal)
                 .addOnSuccessListener(authResult -> {
                     // Successfully Logged in
-                    startActivity(new Intent(Login.this, TempSelectOptionAct.class));
+                    startActivity(new Intent(Login.this, MapsActivity.class));
                     checkUser();
                 })
                 .addOnFailureListener(e -> {

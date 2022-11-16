@@ -68,7 +68,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
 
     private void moreOptionsDialog(PlacesModel model, PlacesHolder holder) {
         // Options to present to user
-        String[] options = {"Edit", "Delete"};
+        String[] options = {"Delete"};
 
         // Getting the BookID from the book model at the current position
         String bookId = model.getId();

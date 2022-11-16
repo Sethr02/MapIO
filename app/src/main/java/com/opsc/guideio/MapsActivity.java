@@ -38,6 +38,7 @@ import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -54,6 +55,9 @@ import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback {
 
+    ImageButton menu, imageButton6;
+    Button save;
+
     private static final String TAG = "";
     private static final float DEFAULT_ZOOM = 15;
     private GoogleMap mMap;
@@ -66,9 +70,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String distanceToDestination;
     private String estimatedTimeToDestination;
     private MarkerOptions markerOptions;
-    ImageButton menu;
-    Button save;
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(Login.uid);
+
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getUid());
+
+    String x, y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +81,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        menu = findViewById(R.id.imageButton3);
+        initViews();
+
         //initialize client (GeeksforGeeks, 2021)
         client = LocationServices.getFusedLocationProviderClient(this);
 
-        save = findViewById(R.id.button);
-        save.setVisibility(View.INVISIBLE);
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,13 +93,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
-            // permissions (GeeksforGeeks, 2021)
+        // Permissions (GeeksforGeeks, 2021)
         if (ActivityCompat.checkSelfPermission(MapsActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getCurrentLocation();
         } else {
-            //request permission (GeeksforGeeks, 2021)
+            // Request permission (GeeksforGeeks, 2021)
             ActivityCompat.requestPermissions(MapsActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
         }
@@ -106,6 +109,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getCurrentLocation();
             }
         });
+
+        imageButton6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Craig This is For You
+                // Intent takes you to PlacesActivity
+                Intent placesIntent = new Intent(MapsActivity.this, TempSelectOptionAct.class);
+                // Passing x coordinate to PlacesActivity via Intent
+                placesIntent.putExtra("x", x);
+                // Passing y coordinate to PlacesActivity via Intent
+                placesIntent.putExtra("y", y);
+                // Starting Activity with values
+                startActivity(placesIntent);
+            }
+        });
+    }
+
+    private void initViews() {
+        menu = findViewById(R.id.imageButton3);
+        imageButton6 = findViewById(R.id.imageButton6);
+        save = findViewById(R.id.button);
+        save.setVisibility(View.INVISIBLE);
     }
 
     private void moveCamera(LatLng latLng, float defaultZoom, String title) {

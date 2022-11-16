@@ -6,7 +6,7 @@
     android:layout_marginBottom="5dp"
     android:elevation="0dp"
     android:padding="5dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="#3E3D3E"
     app:cardCornerRadius="5dp">
 
     <RelativeLayout
@@ -44,6 +44,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="105dp"
             android:maxLines="1"
+            android:textColor="@color/white"
             android:text="X: 21, Y: 23" />
 
         <ImageButton
