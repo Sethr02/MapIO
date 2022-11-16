@@ -50,7 +50,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
         // Getting the Category ID from the book model at the current position
 
         // Setting the Title in the row_book layout
-        //holder.titleTv.setText(title);
+        // holder.titleTv.setText(title);
         // Setting the Description in the row_book layout
         holder.coordinatesTv.setText(new StringBuilder()
                 .append("X: ")
@@ -89,14 +89,9 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
         builder.setTitle("Choose Options")
                 .setItems(options, (dialogInterface, i) -> {
                     if (i == 0) {
-                        /*// Handle onClick for Edit Option
-                        Intent intent = new Intent(context, UpdateActivity.class);
-                        intent.putExtra("bookId", bookId);
-                        context.startActivity(intent);*/
-                    } else if (i == 1) {
                         // Handle onClick for Delete Option
                         // Calling the deleteBook method from MyApplication class and passing respective values
-                        MyApplication.deleteBook(
+                        MyApplication.deletePlace(
                                 context,
                                 "" + bookId,
                                 "" + bookUrl

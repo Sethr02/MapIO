@@ -23,10 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -45,9 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class TempSelectOptionAct extends AppCompatActivity {
+public class PlacesActivity extends AppCompatActivity {
 
     // Firebase Variables (Firebase, 2022)
     private FirebaseAuth firebaseAuth;
@@ -63,8 +58,6 @@ public class TempSelectOptionAct extends AppCompatActivity {
     // Tag for debugging
     private static final String TAG = "Add_Photo_Tag";
 
-    Button btnTakePic, btnViewPics;
-    ImageView iconIv;
     RecyclerView placesRv;
 
     String x = "", y = "";
@@ -74,10 +67,10 @@ public class TempSelectOptionAct extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityResultLauncher;
 
-    // Book Model ArrayList
+    // Places Model ArrayList
     private ArrayList<PlacesModel> placesArrayList;
 
-    // Instance of BookAdapter Class
+    // Instance of PlacesAdapter Class
     private PlacesAdapter placesAdapter;
 
     @Override
@@ -115,40 +108,38 @@ public class TempSelectOptionAct extends AppCompatActivity {
             // Getting the final bitmap (Java2s.com, 2016)
             Bitmap bm = result1.get();
             // Passing the bitmap to the saveImage method
-            imageUri = saveImage(bm, TempSelectOptionAct.this);
+            imageUri = saveImage(bm, PlacesActivity.this);
             uploadFile(imageUri);
         });
 
-        loadBookList();
+        loadPlaces();
     }
 
-    private void loadBookList() {
+    private void loadPlaces() {
         // init array before adding data
         placesArrayList = new ArrayList<>();
 
-        // Book Database Reference (Firebase, 2022)
+        // Places Database Reference (Firebase, 2022)
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ImagesST10119434");
         // addValueEventListener (Firebase, 2022)
         ref.orderByChild("uid").equalTo(FirebaseAuth.getInstance().getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // Clear bookArrayList
+                        // Clear placesArrayList
                         placesArrayList.clear();
                         // DataSnapshot for loop (Firebase, 2022)
                         for (DataSnapshot ds: snapshot.getChildren()){
-                            // Creating a BookModel with object from database
+                            // Creating a PlacesModel with object from database
                             PlacesModel model = ds.getValue(PlacesModel.class);
-                            // Adding model object to bookArrayList
+                            // Adding model object to placesArrayList
                             placesArrayList.add(model);
-                            // Log
-                            //Log.d(TAG, "onDataChange: " + model.getId() + " " + model.getTitle());
                         }
 
                         // Setting Recycler View Layout Manager
-                        placesRv.setLayoutManager(new LinearLayoutManager(TempSelectOptionAct.this, LinearLayoutManager.VERTICAL, false));
+                        placesRv.setLayoutManager(new LinearLayoutManager(PlacesActivity.this, LinearLayoutManager.VERTICAL, false));
                         // Setup Adapter
-                        placesAdapter = new PlacesAdapter(TempSelectOptionAct.this, placesArrayList);
+                        placesAdapter = new PlacesAdapter(PlacesActivity.this, placesArrayList);
                         // Set adapter to recyclerview
                         placesRv.setAdapter(placesAdapter);
                     }
@@ -179,13 +170,13 @@ public class TempSelectOptionAct extends AppCompatActivity {
     }
     //endregion
 
-    //region Upload book to DB method
-    private void uploadBookToDatabase(String uploadedImageUrl, String timestamp) {
-        Log.d(TAG, "uploadBookToDatabase: Uploading Book To Storage");
+    //region Upload place to DB method
+    private void uploadPlaceToDatabase(String uploadedImageUrl, String timestamp) {
+        Log.d(TAG, "uploadPlaceToDatabase: Uploading Place To Storage");
         // Getting current users Unique id
         String uid = firebaseAuth.getUid();
 
-        // Unique ID for book upload
+        // Unique ID for place upload
         String uploadId = "" + timestamp;
 
         PlacesModel place = new PlacesModel(uploadId, uid, uploadedImageUrl, x, y, timestamp);
@@ -199,14 +190,13 @@ public class TempSelectOptionAct extends AppCompatActivity {
                     // Log
                     Log.d(TAG, "onSuccess: Successfully added");
                     // Toast to display when item is successfully added
-                    Toast.makeText(TempSelectOptionAct.this, "Item Successfully added!", Toast.LENGTH_SHORT).show();
-                    //finish();
+                    Toast.makeText(PlacesActivity.this, "Item Successfully added!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     // Log
                     Log.d(TAG, "onFailure: Failed to upload due to " + e.getMessage());
                     // Toast to display when item has Failed!
-                    Toast.makeText(TempSelectOptionAct.this, "Failed to upload due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlacesActivity.this, "Failed to upload due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
     //endregion
@@ -244,18 +234,18 @@ public class TempSelectOptionAct extends AppCompatActivity {
                         // Getting the download url of the uploaded image (Firebase, 2022)
                         fileReference.getDownloadUrl().addOnCompleteListener(task -> {
                                     // Display a Toast when upload is successful
-                                    Toast.makeText(TempSelectOptionAct.this, "Upload Successful!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PlacesActivity.this, "Upload Successful!", Toast.LENGTH_SHORT).show();
                                     // Image url
                                     String uploadedImageUrl = task.getResult().toString();
-                                    // Passing image url and unique id to uploadBookToDatabase
-                                    uploadBookToDatabase(uploadedImageUrl, timestamp);
+                                    // Passing image url and unique id to uploadPlaceToDatabase
+                                    uploadPlaceToDatabase(uploadedImageUrl, timestamp);
                                 })
                                 // Displaying a toast for OnFailureListener
-                                .addOnFailureListener(e -> Toast.makeText(TempSelectOptionAct.this, "Failure due to: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e -> Toast.makeText(PlacesActivity.this, "Failure due to: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
                     })
                     // Toast for OnFailureListener
-                    .addOnFailureListener(e -> Toast.makeText(TempSelectOptionAct.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(PlacesActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
         } else {
             // Displaying a Toast if user hasn't selected an image
             Toast.makeText(this, "No image Selected!", Toast.LENGTH_SHORT).show();
@@ -264,13 +254,13 @@ public class TempSelectOptionAct extends AppCompatActivity {
     //endregion
 
     private void checkPermission(String permission, int requestCode) {
-        if (ContextCompat.checkSelfPermission(TempSelectOptionAct.this, permission) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(PlacesActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission (GeeksforGeeks, 2019)
-            ActivityCompat.requestPermissions(TempSelectOptionAct.this, new String[]{permission}, requestCode);
+            ActivityCompat.requestPermissions(PlacesActivity.this, new String[]{permission}, requestCode);
         } else {
             // calling cameraImageIntent (GeeksforGeeks, 2019)
             cameraImageIntent();
-            Toast.makeText(TempSelectOptionAct.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlacesActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -284,10 +274,10 @@ public class TempSelectOptionAct extends AppCompatActivity {
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Displays toast if camera permission have been granted
-                Toast.makeText(TempSelectOptionAct.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlacesActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
                 // Displays toast if camera permission have been denied
-                Toast.makeText(TempSelectOptionAct.this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlacesActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
