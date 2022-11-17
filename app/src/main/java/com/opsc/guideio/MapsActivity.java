@@ -81,19 +81,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
         initViews();
 
-        //initialize client (GeeksforGeeks, 2021)
+        // Initialize client (GeeksforGeeks, 2021)
         client = LocationServices.getFusedLocationProviderClient(this);
 
         menu.setOnClickListener(view -> startActivity(new Intent(MapsActivity.this, Settings.class)));
 
         // Permissions (GeeksforGeeks, 2021)
         if (ActivityCompat.checkSelfPermission(MapsActivity.this,
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getCurrentLocation();
         } else {
             // Request permission (GeeksforGeeks, 2021)
             ActivityCompat.requestPermissions(MapsActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
         }
 
         binding.gpsRecenter.setOnClickListener(view -> getCurrentLocation());
@@ -102,9 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
 
-                x=String.valueOf(currentLocation.getLatitude());
-                y=String.valueOf(currentLocation.getLongitude());
-                // Craig This is For You
+                x = String.valueOf(currentLocation.getLatitude());
+                y = String.valueOf(currentLocation.getLongitude());
                 // Intent takes you to PlacesActivity
                 Intent placesIntent = new Intent(MapsActivity.this, PlacesActivity.class);
                 // Passing x coordinate to PlacesActivity via Intent
@@ -164,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        //location bias (GeeksforGeeks, 2021)
+        // Location bias (GeeksforGeeks, 2021)
         autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
                 new LatLng(currentLocation.getLongitude(), currentLocation.getLatitude()),
                 new LatLng(currentLocation.getLongitude(), currentLocation.getLatitude())
@@ -328,7 +327,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             LatLng coord = new LatLng(Double.parseDouble(xCoord), Double.parseDouble(yCoord));
             mMap.addMarker(new MarkerOptions().position(coord).title(
-                "POI"
+                    "POI"
             ));
         } catch (Exception e) {
             e.printStackTrace();

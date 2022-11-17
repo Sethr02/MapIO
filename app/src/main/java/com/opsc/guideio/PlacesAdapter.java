@@ -35,24 +35,19 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
 
     @Override
     public void onBindViewHolder(@NonNull PlacesHolder holder, int position) {
-        // Creating an instance of the Book Model with the current position of the Book Arraylist
+        // Creating an instance of the Places Model with the current position of the Place Arraylist
         PlacesModel model = placesArrayList.get(position);
 
-        //
-        // Getting the Title from the book model at the current position
-        //String title = model.getTitle();
-        // Getting the Description from the book model at the current position
+        // Getting the x coordinate from the places model at the current position
         String xCoordinates = model.getX();
+        // Getting the y coordinate from the places model at the current position
         String yCoordinates = model.getY();
-        // Getting the Timestamp from the book model at the current position
+        // Getting the Timestamp from the places model at the current position
         String timestamp = model.getTimestamp();
-        // Getting the IMage URL from the book model at the current position
+        // Getting the Image URL from the places model at the current position
         String imageUrl = model.getUrl();
-        // Getting the Category ID from the book model at the current position
 
-        // Setting the Title in the row_book layout
-        // holder.titleTv.setText(title);
-        // Setting the Description in the row_book layout
+        // Setting the x and y coordinates in the images_row layout
         holder.coordinatesTv.setText(new StringBuilder()
                 .append("X: ")
                 .append(xCoordinates)
@@ -65,14 +60,15 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
                 holder.placeImage);
 
         // Show dialog for more button
-        //Elliott, T. (2022) Adding onclicklistener to Recyclerview in Android, DEV Community. DEV Community. Available at: https://dev.to/theplebdev/adding-onclicklistener-to-recyclerview-in-android-3amb (Accessed: November 17, 2022).
+        // Elliott, T. (2022) Adding onclicklistener to Recyclerview in Android, DEV Community. DEV Community. Available at: https://dev.to/theplebdev/adding-onclicklistener-to-recyclerview-in-android-3amb (Accessed: November 17, 2022).
         holder.moreBtn.setOnClickListener(view -> moreOptionsDialog(model, holder));
-        holder.placeImage.setOnClickListener(veiw -> {
+
+        holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, MapsActivity.class);
             intent.putExtra("x", placesArrayList.get(position).getX());
             intent.putExtra("y", placesArrayList.get(position).getY());
-            //kenju (1958) How do I get extra data from intent on Android?, Stack Overflow. Available at: https://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android (Accessed: November 17, 2022).
-            //Rehman, S. (no date) Intent tutorial in Android with example and types, Abhi Android. Available at: https://abhiandroid.com/programming/intent-in-android (Accessed: November 17, 2022).
+            // kenju (1958) How do I get extra data from intent on Android?, Stack Overflow. Available at: https://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android (Accessed: November 17, 2022).
+            // Rehman, S. (no date) Intent tutorial in Android with example and types, Abhi Android. Available at: https://abhiandroid.com/programming/intent-in-android (Accessed: November 17, 2022).
             context.startActivity(intent);
         });
     }
@@ -81,12 +77,10 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
         // Options to present to user
         String[] options = {"Delete"};
 
-        // Getting the BookID from the book model at the current position
-        String bookId = model.getId();
-        // Getting the BookURL from the book model at the current position
-        String bookUrl = model.getUrl();
-        // Getting the Book Title from the book model at the current position
-        //String bookTitle = model.getTitle();
+        // Getting the id from the places model at the current position
+        String id = model.getId();
+        // Getting the url from the places model at the current position
+        String url = model.getUrl();
 
         // Alert Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -94,11 +88,11 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
                 .setItems(options, (dialogInterface, i) -> {
                     if (i == 0) {
                         // Handle onClick for Delete Option
-                        // Calling the deleteBook method from MyApplication class and passing respective values
+                        // Calling the deletePlace method from MyApplication class and passing respective values
                         MyApplication.deletePlace(
                                 context,
-                                "" + bookId,
-                                "" + bookUrl
+                                "" + id,
+                                "" + url
                         );
                     }
                 })
@@ -113,7 +107,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
     class PlacesHolder extends RecyclerView.ViewHolder {
 
         ImageView placeImage;
-        TextView titleTv, coordinatesTv;
+        TextView coordinatesTv;
         ImageButton moreBtn;
 
         public PlacesHolder(@NonNull View itemView) {
@@ -121,26 +115,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
 
             // Initialising Views
             placeImage = itemView.findViewById(R.id.placeImage);
-            titleTv = itemView.findViewById(R.id.titleTv);
             coordinatesTv = itemView.findViewById(R.id.coordinatesTv);
             moreBtn = itemView.findViewById(R.id.moreBtn);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e("test", "onClick: dostuff");
-//                    if (recyclearViewInterface != null){
-//
-//                        int pos = getAdapterPosition();
-//
-//                        if (pos != RecyclerView.NO_POSITION){
-//                            recyclearViewInterface.onItemClick(pos);
-//
-//                        }
-//
-//                    }
-                }
-            });
         }
 
     }

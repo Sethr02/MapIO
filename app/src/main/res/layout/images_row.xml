@@ -27,15 +27,6 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/titleTv"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/placeRl"
-            android:maxLines="1"
-            android:text="Book Title" />
-
-        <TextView
             android:id="@+id/coordinatesTv"
             style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="wrap_content"
