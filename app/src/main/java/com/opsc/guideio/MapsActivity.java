@@ -302,6 +302,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (extras != null) {
             String xCoord = extras.getString("x");
             String yCoord = extras.getString("y");
+            //kenju (1958) How do I get extra data from intent on Android?, Stack Overflow. Available at: https://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android (Accessed: November 17, 2022).
             placeMarker(xCoord, yCoord);
         }
     }
@@ -332,6 +333,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //Adding a Map with a Marker (no date) Google. Google. Available at: https://developers.google.com/maps/documentation/android-sdk/map-with-marker (Accessed: November 17, 2022).
 
     }
 }

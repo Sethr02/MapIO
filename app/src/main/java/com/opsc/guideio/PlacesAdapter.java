@@ -38,6 +38,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
         // Creating an instance of the Book Model with the current position of the Book Arraylist
         PlacesModel model = placesArrayList.get(position);
 
+        //
         // Getting the Title from the book model at the current position
         //String title = model.getTitle();
         // Getting the Description from the book model at the current position
@@ -64,11 +65,14 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesHold
                 holder.placeImage);
 
         // Show dialog for more button
+        //Elliott, T. (2022) Adding onclicklistener to Recyclerview in Android, DEV Community. DEV Community. Available at: https://dev.to/theplebdev/adding-onclicklistener-to-recyclerview-in-android-3amb (Accessed: November 17, 2022).
         holder.moreBtn.setOnClickListener(view -> moreOptionsDialog(model, holder));
         holder.placeImage.setOnClickListener(veiw -> {
             Intent intent = new Intent(context, MapsActivity.class);
             intent.putExtra("x", placesArrayList.get(position).getX());
             intent.putExtra("y", placesArrayList.get(position).getY());
+            //kenju (1958) How do I get extra data from intent on Android?, Stack Overflow. Available at: https://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android (Accessed: November 17, 2022).
+            //Rehman, S. (no date) Intent tutorial in Android with example and types, Abhi Android. Available at: https://abhiandroid.com/programming/intent-in-android (Accessed: November 17, 2022).
             context.startActivity(intent);
         });
     }
